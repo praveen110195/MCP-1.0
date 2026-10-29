@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MCP AI Studio</title>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --panel: #111827;
+            --panel-2: #1f2937;
+            --primary: #38bdf8;
+            --primary-2: #22c55e;
+            --text: #e5e7eb;
+            --muted: #94a3b8;
+            --accent: #f59e0b;
+            --border: rgba(148, 163, 184, 0.2);
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            font-family: "Segoe UI", sans-serif;
+            background: linear-gradient(135deg, #020617, #0f172a 35%, #111827);
+            color: var(--text);
+        }
+
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 18px 28px;
+            border-bottom: 1px solid var(--border);
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(8px);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .brand {
+            font-size: 1.3rem;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+        }
+
+        .brand span {
+            color: var(--primary);
+        }
+
+        .status-pill {
+            background: rgba(34, 197, 94, 0.12);
+            color: #bbf7d0;
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            padding: 8px 12px;
+            border-radius: 999px;
+            font-size: 0.8rem;
+        }
+
+        .layout {
+            display: grid;
+            grid-template-columns: 280px 1fr 420px;
+            min-height: calc(100vh - 72px);
+        }
+
+        .sidebar,
+        .panel {
+            padding: 20px;
+            border-right: 1px solid var(--border);
+        }
+
+        .sidebar {
+            background: rgba(15, 23, 42, 0.8);
+        }
+
+        .menu-title {
+            font-size: 0.74rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 18px;
+        }
+
+        .examples {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .example-btn {
+            border: 1px solid var(--border);
+            background: rgba(148, 163, 184, 0.07);
+            color: var(--text);
+            padding: 12px 14px;
+            border-radius: 12px;
+            text-align: left;
+            cursor: pointer;
+            transition: 0.2s ease;
+        }
+
+        .example-btn:hover {
+            border-color: rgba(56, 189, 248, 0.6);
+            background: rgba(56, 189, 248, 0.08);
+        }
+
+        .main {
+            padding: 20px 22px;
+        }
+
+        .card {
+            background: rgba(15, 23, 42, 0.72);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 18px;
+            box-shadow: 0 12px 32px rgba(2, 6, 23, 0.2);
+        }
+
+        .prompt-label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #dbeafe;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 140px;
+            resize: vertical;
+            border-radius: 14px;
+            border: 1px solid var(--border);
+            background: rgba(15, 23, 42, 0.9);
+            color: var(--text);
+            padding: 14px 16px;
+            font: inherit;
+        }
+
+        .button-row {
+            margin-top: 16px;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        button {
+            background: linear-gradient(135deg, var(--primary), #0ea5e9);
+            color: white;
+            border: none;
+            padding: 12px 18px;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        button.secondary {
+            background: rgba(148, 163, 184, 0.12);
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+
+        .result-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 18px;
+            margin-top: 18px;
+        }
+
+        .section-title {
+            font-size: 0.8rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 10px;
+        }
+
+        .result-box {
+            background: rgba(15, 23, 42, 0.55);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 16px;
+            min-height: 180px;
+            white-space: pre-wrap;
+            line-height: 1.6;
+            font-size: 0.95rem;
+            color: #dbeafe;
+        }
+
+        .panel {
+            background: rgba(15, 23, 42, 0.7);
+            border-right: none;
+        }
+
+        .metric {
+            padding: 12px 14px;
+            border: 1px solid var(--border);
+            background: rgba(56, 189, 248, 0.06);
+            border-radius: 12px;
+            margin-bottom: 12px;
+        }
+
+        .metric-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-top: 8px;
+            color: var(--primary);
+        }
+
+        .history-panel {
+            margin-top: 24px;
+            border-top: 1px solid var(--border);
+            padding-top: 18px;
+        }
+
+        .history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .history-item {
+            background: rgba(148, 163, 184, 0.05);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 10px 12px;
+            font-size: 0.82rem;
+            color: var(--muted);
+            line-height: 1.4;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @media (max-width: 980px) {
+            .layout {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar, .panel {
+                border-right: none;
+                border-bottom: 1px solid var(--border);
+            }
+
+            .result-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="topbar">
+        <div class="brand"><span>MCP</span> AI Studio</div>
+        <div class="status-pill">Live Workflow</div>
+    </div>
+
+    <div class="layout">
+        <aside class="sidebar">
+            <div class="menu-title">Quick prompts</div>
+            <div class="examples">
+                <button class="example-btn" data-prompt="Get weather data for Bangalore and Singapore and highlight travel recommendations.">Weather lookup</button>
+                <button class="example-btn" data-prompt="Summarize customer support issues from the MCP payload and suggest next actions.">Support summary</button>
+                <button class="example-btn" data-prompt="Transform the MCP result into a marketing-ready summary for stakeholders.">Marketing brief</button>
+            </div>
+
+            <div class="history-panel">
+                <div class="menu-title">Recent chats</div>
+                <div id="historyList" class="history-list"></div>
+            </div>
+        </aside>
+
+        <main class="main">
+            <div class="card">
+                <label class="prompt-label" for="promptInput">Request prompt</label>
+                <textarea id="promptInput">Get weather data for Bangalore and Singapore and highlight travel recommendations.</textarea>
+
+                <div class="button-row">
+                    <button id="runBtn">Run MCP + AI flow</button>
+                    <button class="secondary" id="resetBtn" type="button">Reset</button>
+                </div>
+            </div>
+
+            <div class="result-grid">
+                <div>
+                    <div class="section-title">Raw MCP response</div>
+                    <div id="mcpOutput" class="result-box">Waiting for MCP data…</div>
+                </div>
+                <div>
+                    <div class="section-title">AI modified response</div>
+                    <div id="aiOutput" class="result-box">AI result will appear here…</div>
+                </div>
+            </div>
+        </main>
+
+        <aside class="panel">
+            <div class="section-title">Pipeline</div>
+            <div class="metric">
+                <div>1. REST API</div>
+                <div class="metric-value">Triggered</div>
+            </div>
+            <div class="metric">
+                <div>2. MCP call</div>
+                <div class="metric-value" id="mcpMetric">Idle</div>
+            </div>
+            <div class="metric">
+                <div>3. AI transform</div>
+                <div class="metric-value" id="aiMetric">Idle</div>
+            </div>
+            <div class="metric">
+                <div>Final status</div>
+                <div class="metric-value" id="finalStatus">Ready</div>
+            </div>
+        </aside>
+    </div>
+
+    <script>
+        const runBtn = document.getElementById('runBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const promptInput = document.getElementById('promptInput');
+        const mcpOutput = document.getElementById('mcpOutput');
+        const aiOutput = document.getElementById('aiOutput');
+        const mcpMetric = document.getElementById('mcpMetric');
+        const aiMetric = document.getElementById('aiMetric');
+        const finalStatus = document.getElementById('finalStatus');
+        const historyList = document.getElementById('historyList');
+
+        async function loadHistory() {
+            try {
+                const response = await fetch('/api/chat/history');
+                const rows = await response.json();
+                if (!Array.isArray(rows) || !historyList) return;
+
+                historyList.innerHTML = '';
+                rows.slice(0, 5).forEach((row) => {
+                    const item = document.createElement('div');
+                    item.className = 'history-item';
+                    item.textContent = `${row.prompt || 'Prompt'} → ${row.finalResponse || 'No response yet'}`;
+                    historyList.appendChild(item);
+                });
+            } catch (err) {
+                console.error('History load failed', err);
+            }
+        }
+
+        document.querySelectorAll('.example-btn').forEach((button) => {
+            button.addEventListener('click', () => {
+                promptInput.value = button.dataset.prompt;
+            });
+        });
+
+        resetBtn.addEventListener('click', () => {
+            promptInput.value = '';
+            mcpOutput.textContent = 'Waiting for MCP data…';
+            aiOutput.textContent = 'AI result will appear here…';
+            mcpMetric.textContent = 'Idle';
+            aiMetric.textContent = 'Idle';
+            finalStatus.textContent = 'Ready';
+        });
+
+        runBtn.addEventListener('click', async () => {
+            const prompt = promptInput.value.trim();
+            if (!prompt) {
+                alert('Please enter a prompt first.');
+                return;
+            }
+
+            finalStatus.textContent = 'Running';
+            mcpMetric.textContent = 'Fetching';
+            aiMetric.textContent = 'Waiting';
+
+            try {
+                const response = await fetch('/api/mcp/execute', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ prompt, context: 'User asked through the Streamlit-style dashboard.' })
+                });
+
+                const result = await response.json();
+
+                if (!response.ok || result.status === 'error' || result.status === 'config_error') {
+                    mcpMetric.textContent = result.status === 'config_error' ? 'Config required' : 'Error';
+                    aiMetric.textContent = result.status === 'config_error' ? 'Blocked' : 'Error';
+                    finalStatus.textContent = result.status === 'config_error' ? 'Needs API key' : 'Failed';
+                    const raw = result.rawMcpResponse || { status: 'no_data' };
+                    mcpOutput.textContent = JSON.stringify(raw, null, 2);
+                    aiOutput.textContent = result.error || result.finalResponse || 'The request failed.';
+                    await loadHistory();
+                    return;
+                }
+
+                mcpMetric.textContent = 'Completed';
+                aiMetric.textContent = 'Completed';
+                finalStatus.textContent = 'Success';
+
+                const raw = result.rawMcpResponse;
+                const ai = result.aiModifiedResponse;
+
+                mcpOutput.textContent = JSON.stringify(raw, null, 2);
+                aiOutput.textContent = `${ai.summary}\n\n${JSON.stringify(ai.revisedData, null, 2)}`;
+                await loadHistory();
+            } catch (error) {
+                mcpMetric.textContent = 'Error';
+                aiMetric.textContent = 'Error';
+                finalStatus.textContent = 'Failed';
+                mcpOutput.textContent = 'There was a problem while invoking the MCP workflow.';
+                aiOutput.textContent = error.message;
+            }
+        });
+
+        loadHistory();
+    </script>
+</body>
+</html>

@@ -1,0 +1,15 @@
+version: '3.9'
+
+services:
+  mcp-ai-studio:
+    build:
+      context: .
+    container_name: mcp-ai-studio
+    ports:
+      - "8080:8080"
+    environment:
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      OPENAI_MODEL: ${OPENAI_MODEL:-gpt-4o-mini}
+      OPENAI_ORG: ${OPENAI_ORG:-}
+      MCP_SERVER_URL: ${MCP_SERVER_URL:-}
+    restart: unless-stopped
