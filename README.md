@@ -1,4 +1,4 @@
-# MCP AI Studio
+# MCP AI Studio !
 
 This project is a Spring Boot API + UI demo that triggers an MCP-style workflow, sends the MCP payload to OpenAI for refinement, and returns the final result to the user.
 
